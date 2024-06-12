@@ -50,9 +50,13 @@
                 @Html.DisplayFor(modelItem => item.nota2)
             </td>
             <td>
+                 <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                 <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                 <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+@* 
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new {  id=item.id })
+                @Html.ActionLink("Delete", "Delete", new {  id=item.id }) *@
 
             </td>
         </tr>
