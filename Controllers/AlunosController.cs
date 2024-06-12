@@ -112,6 +112,10 @@ namespace ConAPITESTE.Controllers
         {
             try
             {
+
+
+
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -123,7 +127,38 @@ namespace ConAPITESTE.Controllers
         // GET: AlunosController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+              Aluno aluno = new Aluno();
+            IEnumerable<Aluno> alunos = null;
+            aluno.id = id; 
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7254/api/Alunos" + "/" + id.ToString());
+
+                //HTTP GET
+                
+                var responseTask = client.GetAsync("aluno");
+                responseTask.Wait();
+                var result = responseTask.Result;
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var readTask = result.Content.ReadFromJsonAsync<IList<Aluno>>();
+                    readTask.Wait();
+                    alunos = readTask.Result;
+                }
+                else
+                {
+                    alunos = Enumerable.Empty<Aluno>();
+                    ModelState.AddModelError(string.Empty, "Erro no servidor. Contate o Administrador.");
+                }
+
+            }
+           // aluno
+
+            return View(aluno);
+
+
+
         }
 
         // POST: AlunosController/Delete/5
@@ -133,6 +168,31 @@ namespace ConAPITESTE.Controllers
         {
             try
             {
+                using (var client = new HttpClient())
+                {
+                    // client.BaseAddress = new Uri("https://localhost:7074/api/Produtos");
+                    //HTTP POST
+                    string url = "https://localhost:7254/api/Alunos" + "/"+ id;
+                    
+                    var dataAsString = JsonConvert.SerializeObject(id);
+                    var content = new StringContent(dataAsString);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    var postTask = client.DeleteAsync(url);
+
+                    postTask.Wait();
+
+
+                    var result = postTask.Result;
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+
+
                 return RedirectToAction(nameof(Index));
             }
             catch
